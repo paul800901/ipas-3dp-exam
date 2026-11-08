@@ -387,6 +387,37 @@ FIGS["tg"] = svg(480, 230, "".join(
        for i, (n, v) in enumerate(TG)]
     + [t(240, 222, "PEEK 最耐熱；尼龍最低；PLA 約 60°C 就軟", 12, "middle", "#7a7166")]))
 
+# ---------- 題目專用 ----------
+def _peel_sup(x, y1, y2, broken=False):
+    if not broken:
+        return line(x, y1, x, y2, GRAY, 2.5)
+    m = (y1 + y2) / 2
+    return line(x, y1, x, m - 6, GRAY, 2.5) + line(x, m + 6, x, y2, GRAY, 2.5) + t(x, m + 5, "✗", 13, "middle", BAD, True)
+
+
+FIGS["peel"] = svg(480, 330, "".join([
+    t(240, 20, "下照式：每印一層，機器就把模型往上拉，從盤底「撕」起來", 13, "middle", bold=True),
+    # 左：平放
+    rect(40, 52, 160, 10, BED, INK, 1.2), line(120, 48, 120, 30, INK, 2.5, True), t(130, 42, "往上拉", 12),
+    "".join(_peel_sup(52 + i * 17, 62, 154, i in (2, 5, 7)) for i in range(9)),
+    rect(45, 154, 150, 50, PART, INK, 1.2),
+    rect(20, 170, 200, 40, RESIN, INK, 1.5, extra='fill-opacity=".55"'),
+    line(45, 205, 195, 205, BAD, 4), t(120, 226, "整片黏在盤底", 12, "middle", BAD),
+    "".join(line(50 + i * 35, 252, 50 + i * 35, 232, UV, 1.5, True, marker="u") for i in range(5)),
+    t(120, 278, "B：大面平放", 15, "middle", BAD, True),
+    t(120, 298, "每層都是整片 30×30", 12, "middle"), t(120, 316, "撕很用力 → 支撐被扯斷、掉下來", 12, "middle"),
+    line(240, 40, 240, 320, GRAY, 1, dash="4 4"),
+    # 右：斜放
+    rect(280, 52, 160, 10, BED, INK, 1.2), line(360, 48, 360, 30, INK, 2.5, True), t(370, 42, "往上拉", 12),
+    "".join(line(x, 62, x, 88 + (x - 283) * 75 / 106, GRAY, 2.5) for x in range(292, 388, 14)),
+    '<path d="M360 204L254 129L283 88L389 163Z" fill="%s" stroke="%s" stroke-width="1.2"/>' % (PART, INK),
+    rect(246, 170, 226, 40, RESIN, INK, 1.5, extra='fill-opacity=".55"'),
+    line(350, 205, 370, 205, BAD, 4), t(372, 226, "只黏一小條", 12, "middle", BAD),
+    "".join(line(290 + i * 35, 252, 290 + i * 35, 232, UV, 1.5, True, marker="u") for i in range(5)),
+    t(360, 278, "A、C、D：立起或斜放", 15, "middle", GOOD, True),
+    t(360, 298, "每層面積小", 12, "middle"), t(360, 316, "好撕 → 支撐不會斷", 12, "middle"),
+]))
+
 
 def main():
     OUT.mkdir(exist_ok=True)

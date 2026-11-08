@@ -47,7 +47,7 @@ def main():
         if qid not in ex:
             missing.append(qid)
             continue
-        topic, plain, tip = ex[qid]
+        topic, plain, tip, *fig = ex[qid]
         assert topic in TOPICS, (qid, topic)
         options = [re.sub(r"；\s*\(E\).*$", "", o) for o in q["options"]]
         item = {
@@ -64,6 +64,8 @@ def main():
         imgs = q.get("imgs") or [x for x in (q.get("img"), q.get("img2")) if x]
         if imgs:
             item["imgs"] = imgs
+        if fig:
+            item["fig"] = fig[0]
         if "official" in q:
             off = q["official"]
             if qid in OFFICIAL_CUT:

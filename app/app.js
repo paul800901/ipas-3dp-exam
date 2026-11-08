@@ -271,7 +271,7 @@
     const last = sess.i + 1 >= sess.list.length;
     app.querySelector("#after").innerHTML = `
       <div class="result ${ok ? "good" : "bad"}">${ok ? "✅ 答對了！" : `❌ 答錯了，答案是 ${q.answer}`}</div>
-      <div class="explain"><h4>💡 白話解說</h4>${esc(q.plain)}</div>
+      <div class="explain"><h4>💡 白話解說</h4>${esc(q.plain)}${q.fig ? `<img class="qimg fig" src="fig/${esc(q.fig)}.svg" alt="示意圖（點一下放大）">` : ""}</div>
       <div class="tipbox">📌 一句話記：${esc(q.tip)}</div>
       ${q.official ? `<details class="official"><summary>看官方詳細解析（比較難，可以跳過）</summary><div>${esc(q.official)}</div></details>` : ""}
       <div class="navrow"><button class="primary" id="next">${last ? "看結果" : "下一題 →"}</button></div>`;
@@ -446,7 +446,7 @@
       ${imgsHtml(q)}
       <div class="options">${q.options.map((_, i) => `<button disabled style="opacity:1" class="${LETTERS[i] === q.answer ? "right" : i === mine ? "wrong" : ""}"><span class="letter">${LETTERS[i]}</span><span>${optionText(q, i)}</span></button>`).join("")}</div>
       <p class="muted">${mine === undefined ? "你沒有作答" : `你選 ${LETTERS[mine]}`}，答案是 ${q.answer}</p>
-      <div class="explain"><h4>💡 白話解說</h4>${esc(q.plain)}</div>
+      <div class="explain"><h4>💡 白話解說</h4>${esc(q.plain)}${q.fig ? `<img class="qimg fig" src="fig/${esc(q.fig)}.svg" alt="示意圖（點一下放大）">` : ""}</div>
       <div class="tipbox">📌 一句話記：${esc(q.tip)}</div>
     </div>`;
   }
