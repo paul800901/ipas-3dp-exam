@@ -167,7 +167,7 @@
       <div class="topbar"><button class="small" id="back">← 重點卡列表</button><span class="muted">${l.subject === 1 ? "科目一" : "科目二"}</span></div>
       <h2>${esc(l.title)}</h2>
       <div class="card">
-        ${l.points.map(([h, t]) => `<div class="lesson-point"><h3>${esc(h)}</h3><p>${esc(t)}</p></div>`).join("")}
+        ${l.points.map(([h, t, fig]) => `<div class="lesson-point"><h3>${esc(h)}</h3><p>${esc(t)}</p>${fig ? `<img class="qimg fig" src="fig/${esc(fig)}.svg" alt="示意圖（點一下放大）">` : ""}</div>`).join("")}
       </div>
       <div class="navrow">
         <button class="primary" id="go">練這個主題（${n} 題）</button>
@@ -175,6 +175,7 @@
       </div>
     `, () => {
       bind("#back", learnList);
+      bindZoom();
       bind("#go", () => startPractice(Q.filter((q) => q.topic === key), `主題：${l.title}`, () => lesson(key)));
       if (next) bind("#next", () => lesson(next.key));
     });

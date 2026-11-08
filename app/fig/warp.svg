@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 210" font-family="Microsoft JhengHei,PingFang TC,Noto Sans TC,sans-serif" font-size="14">
+<defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2d2a26"/></marker>
+<marker id="u" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7b5cff"/></marker></defs>
+<rect width="480" height="210" fill="#fff"/>
+<rect x="40" y="150" width="400" height="10" fill="#8f969c" stroke="#2d2a26" stroke-width="1.2" rx="0" /><path d="M100 132Q240 150 380 132L384 100Q240 116 96 100Z" fill="#f0a07f" stroke="#2d2a26" stroke-width="1.5"/><line x1="240" y1="120" x2="150" y2="112" stroke="#2d2a26" stroke-width="1.5" marker-end="url(#a)"/><line x1="240" y1="120" x2="330" y2="112" stroke="#2d2a26" stroke-width="1.5" marker-end="url(#a)"/><text x="240" y="96" font-size="13" text-anchor="middle" fill="#2d2a26">冷卻收縮</text><text x="70" y="128" font-size="13" text-anchor="end" fill="#d63b3b">邊角翹起</text><text x="240" y="184" font-size="13" text-anchor="middle" fill="#2f9e5b">修：熱床加熱、封閉機殼保溫、加 Brim／Raft、塗膠</text><text x="240" y="204" font-size="13" text-anchor="middle" fill="#d63b3b">✗ 風扇猛吹（尤其 ABS）、關熱床會更糟</text>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 180" font-family="Microsoft JhengHei,PingFang TC,Noto Sans TC,sans-serif" font-size="14">
+<defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2d2a26"/></marker>
+<marker id="u" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7b5cff"/></marker></defs>
+<rect width="480" height="180" fill="#fff"/>
+<rect x="80" y="60" width="50" height="90" fill="#f0a07f" stroke="#2d2a26" stroke-width="1.2" rx="0" /><rect x="350" y="60" width="50" height="90" fill="#f0a07f" stroke="#2d2a26" stroke-width="1.2" rx="0" /><rect x="60" y="150" width="360" height="10" fill="#8f969c" stroke="#2d2a26" stroke-width="1.2" rx="0" /><path d="M130 62Q240 76 350 62" fill="none" stroke="#d9673b" stroke-width="4"/><text x="240" y="50" font-size="14" text-anchor="middle" fill="#2d2a26" font-weight="700">架橋：在空中直接拉線，跨過去</text><text x="240" y="110" font-size="13" text-anchor="middle" fill="#2d2a26">溫度低一點、速度快一點</text><text x="240" y="130" font-size="13" text-anchor="middle" fill="#2d2a26">→ 跨得更遠、不下垂</text>
+</svg>
