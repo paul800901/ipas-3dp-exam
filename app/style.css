@@ -173,3 +173,12 @@ details.official div { background: #faf7f2; border-radius: 10px; padding: 10px 1
 }
 .qimg.fig { width: 100%; max-width: 520px; }
 .explain { white-space: pre-line; }
+
+/* 🔖 標記 */
+.markrow { margin-top: 12px; }
+button.mark { border-color: #d9b44a; color: #8a6500; background: #fffdf5; }
+button.mark:hover { background: #fff4d6; }
+button.mark.on { background: #ffe9a8; border-color: #c99a00; color: #6b4e00; }
+.grid-nums button.marked { box-shadow: inset 0 -5px 0 #e0a800; }
+.bookitem { border-bottom: 1px solid var(--line); padding: 4px 0 10px; }
+.bookitem:last-child { border-bottom: none; }

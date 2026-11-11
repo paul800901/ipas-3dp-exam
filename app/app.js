@@ -17,9 +17,9 @@
   function load() {
     try {
       const s = JSON.parse(localStorage.getItem(KEY));
-      if (s && s.stats) return Object.assign({ days: {}, mocks: [] }, s);
+      if (s && s.stats) return Object.assign({ days: {}, mocks: [], marks: {} }, s);
     } catch (e) { /* 壞掉就重來 */ }
-    return { stats: {}, days: {}, mocks: [] };
+    return { stats: {}, days: {}, mocks: [], marks: {} };
   }
   function save() { localStorage.setItem(KEY, JSON.stringify(store)); }
   function today() {
@@ -39,6 +39,27 @@
   // 答錯過、而且還沒有連續答對 2 次，就留在錯題本
   const inWrongBook = (id) => { const s = store.stats[id]; return !!s && s.w > 0 && s.streak < 2; };
   const seen = (id) => !!store.stats[id];
+  // 自己標記「不熟／用猜的」：要自己取消才會離開複習清單
+  const marked = (id) => !!store.marks[id];
+  const toReview = (id) => inWrongBook(id) || marked(id);
+  function toggleMark(id) {
+    if (marked(id)) delete store.marks[id]; else store.marks[id] = 1;
+    save();
+  }
+  const markLabel = (id) => (marked(id) ? "🔖 已標記（再按一下取消）" : "🔖 標記這題：不熟／用猜的");
+  const markBtn = (id) => `<button class="small mark ${marked(id) ? "on" : ""}" data-mark="${esc(id)}">${markLabel(id)}</button>`;
+  // 按標記鈕只換按鈕本身，不重畫畫面（作答到一半也不會跳掉）
+  function bindMarks(onChange) {
+    app.querySelectorAll("[data-mark]").forEach((b) => {
+      b.onclick = () => {
+        const id = b.dataset.mark;
+        toggleMark(id);
+        b.classList.toggle("on", marked(id));
+        b.textContent = markLabel(id);
+        if (onChange) onChange(id);
+      };
+    });
+  }
 
   // ---------- 小工具 ----------
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -95,7 +116,7 @@
   // ---------- 首頁 ----------
   function home() {
     const done = Q.filter((q) => seen(q.id)).length;
-    const wrong = Q.filter((q) => inWrongBook(q.id)).length;
+    const wrong = Q.filter((q) => toReview(q.id)).length;
     const td = store.days[today()] || { done: 0, right: 0 };
     const left = daysLeft();
     const lastMock = store.mocks[store.mocks.length - 1];
@@ -115,14 +136,14 @@
         <button id="m-learn"><span class="icon">📖</span><span>先看重點<span class="sub">用最白話的方式，把會考的觀念整理成卡片</span></span></button>
         <button id="m-real" class="primary"><span class="icon">⭐</span><span>刷 115 年真題<span class="sub" style="color:#ffe9dc">今年 5 月真的考過的 100 題，最重要</span></span></button>
         <button id="m-practice"><span class="icon">✏️</span><span>更多練習<span class="sub">官方樣題、依主題練、全部隨機</span></span></button>
-        <button id="m-wrong"><span class="icon">❌</span><span>錯題本（${wrong} 題）<span class="sub">答錯的題目會留在這裡，連續答對 2 次才會消失</span></span></button>
+        <button id="m-wrong"><span class="icon">❌</span><span>錯題＋標記（${wrong} 題）<span class="sub">答錯的、和你按 🔖 標記的題目都在這裡</span></span></button>
         <button id="m-mock"><span class="icon">🎯</span><span>模擬考<span class="sub">50 題、75 分鐘，跟真的考試一樣${lastMock ? `｜上次 ${lastMock.score} 分` : ""}</span></span></button>
       </div>
       <div class="card">
         <h3>建議怎麼念（兩週）</h3>
         <p>① 前 3 天：每天看 3～4 張重點卡，看完就按「練這個主題」。</p>
         <p>② 第 4～10 天：每天刷 40 題真題＋樣題，錯的看白話解說。</p>
-        <p>③ 每天睡前：把錯題本清一次。</p>
+        <p>③ 用猜的、不太確定的題目按「🔖 標記」；每天睡前把「錯題＋標記」清一次。</p>
         <p>④ 最後 4 天：每天各考一次科目一、科目二模擬考，錯的再看解說。</p>
         <p class="muted">真題（⭐）常常換個說法再考一次，一定要熟。</p>
       </div>
@@ -134,7 +155,7 @@
       bind("#m-wrong", wrongBook);
       bind("#m-mock", mockMenu);
       bind("#m-reset", () => {
-        if (confirm("確定要清除所有作答紀錄嗎？清掉就回不來了。")) { store = { stats: {}, days: {}, mocks: [] }; save(); home(); }
+        if (confirm("確定要清除所有作答紀錄嗎？清掉就回不來了。")) { store = { stats: {}, days: {}, mocks: [], marks: {} }; save(); home(); }
       });
     });
   }
@@ -219,8 +240,8 @@
   let sess = null;
   function orderForPractice(list) {
     const fresh = shuffle(list.filter((q) => !seen(q.id)));
-    const wrong = shuffle(list.filter((q) => seen(q.id) && inWrongBook(q.id)));
-    const rest = shuffle(list.filter((q) => seen(q.id) && !inWrongBook(q.id)));
+    const wrong = shuffle(list.filter((q) => seen(q.id) && toReview(q.id)));
+    const rest = shuffle(list.filter((q) => seen(q.id) && !toReview(q.id)));
     return fresh.concat(wrong, rest);
   }
   function startPractice(list, title, backTo, ordered) {
@@ -242,10 +263,12 @@
         <div class="question">${esc(q.q)}</div>
         ${imgsHtml(q)}
         <div class="options">${q.options.map((_, i) => `<button data-o="${i}"><span class="letter">${LETTERS[i]}</span><span>${optionText(q, i)}</span></button>`).join("")}</div>
+        <div class="markrow">${markBtn(q.id)}</div>
         <div id="after"></div>
       </div>
     `, () => {
       bindZoom();
+      bindMarks();
       bind("#quit", () => (sess.i > 0 ? summary() : sess.backTo()));
       bindAll("[data-o]", (el) => answer(+el.dataset.o));
       keyHandler = (e) => {
@@ -271,6 +294,7 @@
     const last = sess.i + 1 >= sess.list.length;
     app.querySelector("#after").innerHTML = `
       <div class="result ${ok ? "good" : "bad"}">${ok ? "✅ 答對了！" : `❌ 答錯了，答案是 ${q.answer}`}</div>
+      ${ok && !marked(q.id) ? '<p class="muted">如果是用猜的，按上面的「🔖 標記」，這題就會留在「錯題＋標記」。</p>' : ""}
       <div class="explain"><h4>💡 白話解說</h4>${esc(q.plain)}${q.fig ? `<img class="qimg fig" src="fig/${esc(q.fig)}.svg" alt="示意圖（點一下放大）">` : ""}</div>
       <div class="tipbox">📌 一句話記：${esc(q.tip)}</div>
       ${q.official ? `<details class="official"><summary>看官方詳細解析（比較難，可以跳過）</summary><div>${esc(q.official)}</div></details>` : ""}
@@ -278,13 +302,18 @@
     const go = () => { if (last) summary(); else { sess.i++; question(); } };
     bind("#next", go);
     app.querySelector("#next").scrollIntoView({ behavior: "smooth", block: "end" });
-    keyHandler = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } };
+    keyHandler = (e) => {
+      if (e.target.closest && e.target.closest("[data-mark]")) return; // 讓標記鈕自己吃 Enter／空白鍵
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+    };
   }
 
   function summary() {
     const done = sess.wrongIds.length + sess.right;
     const pct = done ? Math.round((sess.right / done) * 100) : 0;
     const moreLeft = orderForPractice(sess.pool).length > 0;
+    const markedIds = sess.list.slice(0, done).filter((id) => marked(id) && !sess.wrongIds.includes(id));
+    const redoIds = sess.wrongIds.concat(markedIds);
     show(`
       <h2>這一輪結束</h2>
       <div class="card" style="text-align:center">
@@ -292,15 +321,16 @@
         <p>做了 ${done} 題，答對 ${sess.right} 題</p>
         <p class="muted">${pct >= 80 ? "很棒！保持下去 💪" : pct >= 60 ? "不錯，錯的再看一次解說就會了" : "沒關係，錯的題目都進了錯題本，多練幾次就會"}</p>
       </div>
+      ${markedIds.length ? `<div class="card"><h3>這輪答對、但有標記 🔖 的題目</h3>${markedIds.map((id) => `<p>• ${esc(QBY[id].q.slice(0, 40))}…<br><span class="muted">答案 ${QBY[id].answer}：${esc(QBY[id].tip)}</span></p>`).join("")}</div>` : ""}
       ${sess.wrongIds.length ? `<div class="card"><h3>這輪答錯的題目</h3>${sess.wrongIds.map((id) => `<p>• ${esc(QBY[id].q.slice(0, 40))}…<br><span class="muted">答案 ${QBY[id].answer}：${esc(QBY[id].tip)}</span></p>`).join("")}</div>` : ""}
       <div class="navrow">
-        ${sess.wrongIds.length ? `<button class="primary" id="redo">把錯的再做一次</button>` : ""}
+        ${redoIds.length ? `<button class="primary" id="redo">${markedIds.length ? "把錯的和標記的再做一次" : "把錯的再做一次"}</button>` : ""}
         ${moreLeft ? `<button id="more">同範圍再來 ${SESSION_SIZE} 題</button>` : ""}
         <button id="back">回上一頁</button>
       </div>
     `, () => {
       const s = sess;
-      bind("#redo", () => startPractice(s.wrongIds.map((id) => QBY[id]), "再做一次答錯的", s.backTo, true));
+      bind("#redo", () => startPractice(redoIds.map((id) => QBY[id]), markedIds.length ? "再做一次錯的和標記的" : "再做一次答錯的", s.backTo, true));
       bind("#more", () => startPractice(s.pool, s.title, s.backTo));
       bind("#back", s.backTo);
     });
@@ -308,16 +338,22 @@
 
   // ---------- 錯題本 ----------
   function wrongBook() {
-    const list = Q.filter((q) => inWrongBook(q.id));
+    const list = Q.filter((q) => toReview(q.id));
+    const nMarked = list.filter((q) => marked(q.id)).length;
+    const line = (q) => {
+      const why = [inWrongBook(q.id) ? `錯 ${store.stats[q.id].w} 次` : "", marked(q.id) ? "🔖 你標記的" : ""].filter(Boolean).join("・");
+      return `<div class="bookitem"><p>• ${esc(q.q.slice(0, 45))}…<br><span class="muted">答案 ${q.answer}：${esc(q.tip)}（${why}）</span></p>${marked(q.id) ? markBtn(q.id) : ""}</div>`;
+    };
     show(`
       <div class="topbar"><button class="small" id="back">← 回首頁</button></div>
-      <h2>❌ 錯題本（${list.length} 題）</h2>
-      <p class="muted">答錯的題目會留在這裡。同一題連續答對 2 次，就會自動移出。</p>
-      ${list.length ? `<button class="primary" id="go" style="width:100%">開始練錯題</button>` : `<div class="card">目前沒有錯題，太厲害了！</div>`}
-      <div class="card">${list.map((q) => `<p>• ${esc(q.q.slice(0, 45))}…<br><span class="muted">答案 ${q.answer}：${esc(q.tip)}（錯 ${store.stats[q.id].w} 次）</span></p>`).join("") || '<p class="muted">（空的）</p>'}</div>
+      <h2>❌ 錯題＋標記（${list.length} 題）</h2>
+      <p class="muted">答錯的題目：同一題連續答對 2 次，就會自動移出。<br>🔖 標記的題目（現在 ${nMarked} 題）：答對也不會消失，熟了再自己按一下取消。</p>
+      ${list.length ? `<button class="primary" id="go" style="width:100%">開始練這些題目</button>` : `<div class="card">目前沒有錯題，也沒有標記的題目，太厲害了！</div>`}
+      <div class="card">${list.map(line).join("") || '<p class="muted">（空的）</p>'}</div>
     `, () => {
       bind("#back", home);
-      bind("#go", () => startPractice(list, "錯題本", wrongBook));
+      bind("#go", () => startPractice(list, "錯題＋標記", wrongBook));
+      bindMarks(() => wrongBook());
     });
   }
 
@@ -361,17 +397,20 @@
         <div class="question">${mock.i + 1}. ${esc(q.q)}</div>
         ${imgsHtml(q)}
         <div class="options">${q.options.map((_, i) => `<button data-o="${i}" class="${mock.ans[q.id] === i ? "picked" : ""}"><span class="letter">${LETTERS[i]}</span><span>${optionText(q, i)}</span></button>`).join("")}</div>
+        <div class="markrow">${markBtn(q.id)}</div>
         <div class="navrow">
           <button id="prev" ${mock.i ? "" : "disabled"}>← 上一題</button>
           <button id="next" class="primary" ${mock.i < n - 1 ? "" : "disabled"}>下一題 →</button>
         </div>
       </div>
       <div class="card">
-        <div class="grid-nums">${mock.list.map((id, i) => `<button data-j="${i}" class="${mock.ans[id] !== undefined ? "done" : ""} ${i === mock.i ? "cur" : ""}">${i + 1}</button>`).join("")}</div>
+        <div class="grid-nums">${mock.list.map((id, i) => `<button data-j="${i}" class="${mock.ans[id] !== undefined ? "done" : ""} ${i === mock.i ? "cur" : ""} ${marked(id) ? "marked" : ""}">${i + 1}</button>`).join("")}</div>
+        <p class="muted">題號下面有黃線的，是你標記 🔖 的題目，交卷前可以回去再看一次。</p>
         <div class="navrow"><button id="submit" class="primary">交卷</button><button id="giveup" class="ghost">放棄這次考試</button></div>
       </div>
     `, () => {
       bindZoom();
+      bindMarks((id) => { const g = app.querySelector(`[data-j="${mock.i}"]`); if (g) g.classList.toggle("marked", marked(id)); });
       const go = (j) => { mock.i = j; mockQuestion(); };
       bindAll("[data-o]", (el) => {
         mock.ans[q.id] = +el.dataset.o;
@@ -416,6 +455,7 @@
       save();
     }
     const wrong = mock.list.filter((id) => LETTERS[mock.ans[id]] !== QBY[id].answer);
+    const markedRight = mock.list.filter((id) => LETTERS[mock.ans[id]] === QBY[id].answer && marked(id));
     const msg = mock.score >= 70 ? "這科穩了！🎉" : mock.score >= 60 ? "這科及格了，但兩科平均要 70，再拚一點" : "還差一點，把下面錯的看懂再考一次";
     show(`
       <h2>模擬考成績・${subjName(mock.subject)}</h2>
@@ -424,13 +464,15 @@
         <p>答對 ${mock.right} / ${mock.list.length} 題</p>
         <p>${msg}</p>
       </div>
-      <div class="card"><div class="grid-nums">${mock.list.map((id, i) => `<button data-j="${i}" class="${LETTERS[mock.ans[id]] === QBY[id].answer ? "right" : "wrong"}">${i + 1}</button>`).join("")}</div>
-        <p class="muted">綠色答對、紅色答錯，點題號可以看那題的解說。</p></div>
+      <div class="card"><div class="grid-nums">${mock.list.map((id, i) => `<button data-j="${i}" class="${LETTERS[mock.ans[id]] === QBY[id].answer ? "right" : "wrong"} ${marked(id) ? "marked" : ""}">${i + 1}</button>`).join("")}</div>
+        <p class="muted">綠色答對、紅色答錯，題號下面有黃線的是你標記的。點題號可以看那題的解說。</p></div>
+      ${markedRight.length ? `<h3>答對、但你有標記 🔖 的題目（${markedRight.length} 題）</h3>${markedRight.map((id) => reviewCard(id)).join("")}` : ""}
       <h3>答錯的題目（${wrong.length} 題）</h3>
       ${wrong.map((id) => reviewCard(id)).join("")}
       <div class="navrow"><button class="primary" id="again">再考一次</button><button id="back">回首頁</button></div>
     `, () => {
       bindZoom();
+      bindMarks((id) => { const g = app.querySelector(`[data-j="${mock.list.indexOf(id)}"]`); if (g) g.classList.toggle("marked", marked(id)); });
       bind("#again", () => startMock(mock.subject));
       bind("#back", home);
       bindAll("[data-j]", (el) => mockReview(+el.dataset.j));
@@ -448,6 +490,7 @@
       <p class="muted">${mine === undefined ? "你沒有作答" : `你選 ${LETTERS[mine]}`}，答案是 ${q.answer}</p>
       <div class="explain"><h4>💡 白話解說</h4>${esc(q.plain)}${q.fig ? `<img class="qimg fig" src="fig/${esc(q.fig)}.svg" alt="示意圖（點一下放大）">` : ""}</div>
       <div class="tipbox">📌 一句話記：${esc(q.tip)}</div>
+      <div class="markrow">${markBtn(id)}</div>
     </div>`;
   }
 
@@ -461,6 +504,7 @@
       </div>
     `, () => {
       bindZoom();
+      bindMarks();
       bind("#back", mockResult);
       bind("#prev", () => mockReview(j - 1));
       bind("#next", () => mockReview(j + 1));
