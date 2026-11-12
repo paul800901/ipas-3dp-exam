@@ -83,7 +83,10 @@
     if (!p) PAPERS.push((p = { subject: q.subject, no: q.paper, ids: [] }));
     p.ids.push(q.id);
   });
-  PAPERS.sort((a, b) => a.subject - b.subject || a.no - b.no);
+  // 第 5、6 份是照真題風格出的觀念判斷題，排最前面；第 3、4 份考講義細節，比真題難，排最後
+  const paperRank = (no) => (no >= 5 ? 0 : no <= 2 ? 1 : 2);
+  const paperNote = (no) => ["觀念判斷題，最接近真題，優先練", "綜合題", "講義細節題，比真題難，當補充就好"][paperRank(no)];
+  PAPERS.sort((a, b) => a.subject - b.subject || paperRank(a.no) - paperRank(b.no) || a.no - b.no);
   const paperName = (p) => `AI 模擬卷・${p.subject === 1 ? "科目一" : "科目二"}・第 ${p.no} 份`;
   function tagsHtml(q) {
     const src = q.src === "115真題" ? ["real", "⭐ 115 年真題"] : isAI(q) ? ["ai", "🤖 AI 模擬題"] : ["", "官方樣題"];
@@ -413,9 +416,17 @@
         <p>每份 ${MOCK_SIZE} 題左右。「模擬考」跟真的考試一樣計時 ${MOCK_MINUTES} 分鐘、交卷才對答案；「練習」每題馬上看解說。</p>
         <p class="muted">答錯的一樣會進「錯題＋標記」。若解說跟官方講義不同，以官方為準。</p>
       </div>
+      <div class="card">
+        <h3>今年真題怎麼考（115 年 100 題分析）</h3>
+        <p>• 沒有考公司、年份、人名這類冷知識；要背的只有七大技術的名稱與縮寫。</p>
+        <p>• 科目一：看一段製程描述判斷是哪種技術、技術之間的比較、某設計「為什麼」這樣做、某情境選哪種技術、操作安全怎麼處置。</p>
+        <p>• 科目二：幾乎都是實務判斷：參數調高調低會怎樣、看到某種缺陷怎麼修、模型怎麼擺、材料怎麼選；還有幾題看圖判斷擺放。</p>
+        <p>• 數字很少，只有常用的（例如 PLA 約 190～220°C、層厚約為噴嘴直徑的一半）。約四成題目問「何者有誤／不是」，要看清楚題目。</p>
+      </div>
       ${PAPERS.map((p, i) => {
         const m = last(p);
         return `<div class="card"><h3>${paperName(p)}</h3>
+          <p><b>${paperNote(p.no)}</b></p>
           <p class="muted">${p.ids.length} 題${m ? `｜上次模擬考 ${m.score} 分（${m.date}）` : ""}｜練過 ${p.ids.filter(seen).length} 題</p>
           <div class="navrow"><button class="primary" data-pm="${i}">模擬考（計時）</button><button data-pp="${i}">練習（每題看解說）</button></div></div>`;
       }).join("")}

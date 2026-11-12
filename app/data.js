@@ -3905,23 +3905,6 @@ window.EXAM_DATA = {
 "paper": 2
 },
 {
-"id": "ai-1a-01",
-"src": "AI模擬題",
-"subject": 1,
-"topic": "name",
-"q": "「實體自由成型（Solid Freeform Fabrication）」這個名稱，最早是由下列哪一個單位用來描述積層製造技術？",
-"options": [
-"美國 3D Systems 公司",
-"美國德州大學奧斯汀分校",
-"美國麻省理工學院（MIT）",
-"美國 Stratasys 公司"
-],
-"answer": "B",
-"plain": "答案是德州大學奧斯汀分校。3D 列印早期像新生兒有好幾個小名：3D Systems 公司叫它「快速原型（Rapid Prototyping）」，德州大學奧斯汀分校叫它「實體自由成型」。MIT 是黏著劑噴印（BJT）專利的提出者，Stratasys 是 FDM 專利的申請者，都不是這個名稱的來源。",
-"tip": "SFF＝德州大學",
-"paper": 1
-},
-{
 "id": "ai-1a-02",
 "src": "AI模擬題",
 "subject": 1,
@@ -3953,40 +3936,6 @@ window.EXAM_DATA = {
 "answer": "A",
 "plain": "Jetting 是「噴」，Extrusion 才是「擠」。Material Jetting 應該是「材料噴印成型技術（MJT）」，材料擠製的英文是 Material Extrusion（MEX）。其他三個都對：Binder（黏著劑）Jetting、Directed Energy Deposition（指向性能量沉積）、Sheet Lamination（薄片疊層）。",
 "tip": "Jet噴、Extrusion擠",
-"paper": 1
-},
-{
-"id": "ai-1a-04",
-"src": "AI模擬題",
-"subject": 1,
-"topic": "name",
-"q": "關於 ISO/ASTM 52900 國際標準，下列敘述何者有誤？",
-"options": [
-"由國際標準化組織（ISO）與美國材料試驗協會（ASTM）共同制定",
-"第 2 版標準已於 2021 年 11 月發布",
-"將積層製造的製程分為 7 種技術",
-"標準中的七大技術是依製程發展歷史的先後順序排列"
-],
-"answer": "D",
-"plain": "標準本身是照「英文字母」排序；照發展歷史排（VPP→MEX→MJT→BJT→PBF→DED→SHL）的是學習指引自己的編排，目的是方便理解技術間承先啟後的關係。其他三項都正確：ISO 與 ASTM 共同制定、第 2 版 2021 年 11 月發布、分成 7 種技術。",
-"tip": "標準按字母、指引按歷史",
-"paper": 2
-},
-{
-"id": "ai-1a-05",
-"src": "AI模擬題",
-"subject": 1,
-"topic": "name",
-"q": "關於 FDM 與 FFF 兩個名稱的由來，下列敘述何者正確？",
-"options": [
-"FDM（熔融沉積成型）技術專利最早由 Stratasys 公司於 1989 年申請",
-"FFF 是 Stratasys 公司註冊的商業商標名稱",
-"FDM 是開源社群為避免商標爭議而另取的通稱",
-"FFF 技術專利最早由 3D Systems 公司申請"
-],
-"answer": "A",
-"plain": "FDM 是 Stratasys 1989 年申請專利的技術名稱。專利到期後大家想做同樣的機器，但 FDM 牽涉商標，開源社群與學術界就改稱「熔融線材製造（FFF）」。所以 B、C 剛好把兩者顛倒；D 的 3D Systems 是提出「快速原型」說法的公司，和 FFF 無關。",
-"tip": "FDM原廠、FFF開源",
 "paper": 1
 },
 {
@@ -4090,23 +4039,6 @@ window.EXAM_DATA = {
 "plain": "下照式像從玻璃桌底下往上打光：槽底要透光，光從下面照進去，工件是「倒吊著」從槽底往上長出來。所以 B（上照）、C（正立）錯；講義說下照式多數採用 DLP、LCD 的面曝光架構，不是雷射點掃描，D 也錯。",
 "tip": "下照：透光槽底倒著長",
 "paper": 1
-},
-{
-"id": "ai-1a-18",
-"src": "AI模擬題",
-"subject": 1,
-"topic": "tech",
-"q": "關於數位光處理（DLP）技術，下列敘述何者正確？",
-"options": [
-"由美國 Carbon 公司所開發，核心元件為液晶面板",
-"由美國 3D Systems 公司所開發，核心元件為 f-θ 鏡頭",
-"最初由德州儀器所開發，核心元件為數位微鏡元件（DMD）晶片",
-"最初由德州儀器所開發，核心元件為黑白液晶面板"
-],
-"answer": "C",
-"plain": "DLP 的心臟是 DMD 晶片，上面有數十萬到數百萬片超小鏡子，每片能快速偏轉，決定光要不要投出去，最早由德州儀器開發。液晶面板是 LCD（MSLA）技術的核心；Carbon 開發的是 CLIP；f-θ 鏡頭屬於雷射振鏡系統。",
-"tip": "DLP＝德儀＋微鏡DMD",
-"paper": 2
 },
 {
 "id": "ai-1a-19",
@@ -4600,23 +4532,6 @@ window.EXAM_DATA = {
 "plain": "錯在「受限於粉末床」。DED 根本沒有粉末床，是噴嘴把材料和熱源一起送到要加工的位置，像用焊槍在零件上補料，所以可以做中大型件，也能在不規則曲面上修補磨損的模具、傳動軸、渦輪葉片。在植入物表面長出多孔結構、幫助骨頭長進去，也是講義提到的應用。",
 "tip": "DED 無粉床，大件修補強",
 "paper": 1
-},
-{
-"id": "ai-1b-31",
-"src": "AI模擬題",
-"subject": 1,
-"topic": "name",
-"q": "由美國麻省理工學院（MIT）於 1989 年首度提出，並成為全球首項實現全彩 3D 列印的技術，是下列何者？",
-"options": [
-"材料噴印成型技術（MJT）",
-"薄片疊層成型技術（SHL）",
-"光聚合固化成型技術（VPP）",
-"黏著劑噴印成型技術（BJT）"
-],
-"answer": "D",
-"plain": "關鍵字「MIT、1989、首項全彩」就是 BJT。它在粉末上噴黏著劑，黏著劑可以搭配彩色墨水，所以最早做出全彩模型。MJT 和紙張 SHL 後來也能做彩色，但不是「首項」；VPP 是第一個「商業化」的 3D 列印技術，別和「首項全彩」搞混。",
-"tip": "MIT1989首全彩＝BJT",
-"paper": 2
 },
 {
 "id": "ai-1b-32",
@@ -6234,23 +6149,6 @@ window.EXAM_DATA = {
 "paper": 3
 },
 {
-"id": "ai-1d-32",
-"src": "AI模擬題",
-"subject": 1,
-"topic": "name",
-"q": "以色列公司研發的桌上型薄片疊層設備，配置捲筒狀塑膠薄膜為成型基材，反覆執行切割、選擇性塗膠、覆蓋壓實的循環。此設備為下列何者？",
-"options": [
-"SAHP",
-"CAM-LEM",
-"SOLIDO",
-"UAM"
-],
-"answer": "C",
-"plain": "答案是 C。SOLIDO 用的是捲筒塑膠薄膜。A SAHP 是日本 Kira Corp 的設備，用 A4 辦公紙並整合彩色噴墨印表機做全彩模型。B CAM-LEM 是講義陶瓷薄片疊層製程的例子。D UAM 是超音波積層製造，用於金屬箔片。記法：紙張 SAHP、塑膠 SOLIDO、金屬 UAM、陶瓷 CAM-LEM。",
-"tip": "塑膠捲膜是SOLIDO",
-"paper": 4
-},
-{
 "id": "ai-1d-33",
 "src": "AI模擬題",
 "subject": 1,
@@ -7201,23 +7099,6 @@ window.EXAM_DATA = {
 "plain": "結論：D錯。實體模型像一顆完全密封的氣球，面要連續、封閉、不能互相穿插，才包得住體積；破一個洞（未封閉）就是非水密／非流形。講義特別提醒：螢幕上看得到的3D圖形，不代表資料結構正確，破面或拓撲錯誤常讓切層失敗。A、B、C都是講義列的正確條件。",
 "tip": "實體＝封閉不破不穿插",
 "paper": 1
-},
-{
-"id": "ai-2a-02",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "file",
-"q": "不同CAD軟體間交換模型資料時，關於IGES與STEP兩種標準格式，下列敘述何者正確？",
-"options": [
-"IGES由ISO制定，是目前功能最完整且持續更新的通用交換標準",
-"STEP（ISO 10303）由ISO制定，功能最完整且持續更新，獲絕大多數CAD軟體支援",
-"STEP於1980年代定義，因規格較早期，轉換時常發生破面或資料遺失",
-"IGES與STEP都以三角網格近似曲面，因此已失去圓心、曲率等幾何資訊"
-],
-"answer": "B",
-"plain": "結論選B。IGES像「老字號翻譯機」，1980年代就有，但翻譯時常漏字（破面、資料遺失）；STEP是ISO制定的「新版翻譯機」，功能最完整、持續更新、大多數CAD都支援。A、C把兩者對調了；D錯在IGES、STEP屬參數化／實體幾何架構，保留圓心、曲率等精確資訊，用三角網格近似的是STL、AMF、3MF。",
-"tip": "IGES老易破，STEP新最全",
-"paper": 2
 },
 {
 "id": "ai-2a-03",
@@ -8682,23 +8563,6 @@ window.EXAM_DATA = {
 "paper": 2
 },
 {
-"id": "ai-2c-31",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "fdm",
-"q": "關於熔融擠製成型（FFF）的切片軟體，下列敘述何者有誤？",
-"options": [
-"Lychee Slicer是講義用來說明FFF加工參數的範例軟體",
-"PrusaSlicer衍生自經典的Slic3r",
-"UltiMaker Cura、Simplify3D、Repetier都是講義列舉的FFF切片軟體",
-"切片輸出常為G-code，機器依此執行相對位置移動、噴嘴溫度與動態擠料"
-],
-"answer": "A",
-"plain": "答案是A。講義列舉的FFF切片軟體是UltiMaker Cura、PrusaSlicer（衍生自經典的Slic3r）、Simplify3D、Repetier、Slic3r等；講義是用Lychee Slicer（法國軟體公司開發）示範「下照式VPP」光固化參數，所以A對講義範例的描述是錯的（這不代表Lychee軟體不能用於FFF）。D也正確：FFF切片的最終輸出常是G-code，機器照著它移動、控制噴嘴溫度和擠料。",
-"tip": "講義用Lychee示範VPP",
-"paper": 3
-},
-{
 "id": "ai-2c-32",
 "src": "AI模擬題",
 "subject": 2,
@@ -8884,23 +8748,6 @@ window.EXAM_DATA = {
 "plain": "答案是C。可以把它想成「點→線→面→體」一層層長出來：點只有位置，線有長度，面有面積，被面包起來的實體才有體積。C把「面」說成具備體積，錯在把面積和體積搞混；面是由封閉的線圍成、具備面積。A正確，講義強調3D是指三個空間維度，一個XYZ點座標不等於實體；B、D也都與講義相符。",
 "tip": "點位線長面積體體積",
 "paper": 4
-},
-{
-"id": "ai-2c-02",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "file",
-"q": "STL（STereoLithography）檔案格式最初是在什麼背景下、由誰定義的？",
-"options": [
-"美國3D Systems公司於1988年推出首台商業化3D印表機時定義",
-"國際標準化組織（ISO）於1980年代為CAD軟體間資料交換而制定",
-"ASTM於2011年為記錄多材料與多色外觀等資訊而推出",
-"3MF聯盟（微軟等大廠主導）為原生支援全彩列印而推出"
-],
-"answer": "A",
-"plain": "答案是A。講義說CAD格式原本是為了方便幾何編輯與資料交換，不是為了輕量化或直接列印，所以3D Systems在1988年推出首台商業化3D印表機時，另外定義了STL，用大量三角形包住實體。B混合了IGES（1980年代定義）與STEP（ISO制定）的描述，兩者都是CAD交換格式；C是AMF的背景；D是3MF，都不是STL。",
-"tip": "STL源自1988首台機",
-"paper": 3
 },
 {
 "id": "ai-2c-03",
@@ -9226,23 +9073,6 @@ window.EXAM_DATA = {
 "paper": 4
 },
 {
-"id": "ai-2c-22",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "place",
-"q": "關於講義介紹的下照式光固化切層軟體Meshmixer與Lychee Slicer，下列敘述何者有誤？",
-"options": [
-"Meshmixer由Autodesk開發，網格編修與幾何功能至今仍被廣泛應用",
-"Meshmixer已於2021年停止版本更新",
-"Lychee Slicer採訂閱制營運，整合多數品牌設備的參數檔（Profiles）",
-"Lychee Slicer已停止更新，故講義僅以Meshmixer作為基準範本"
-],
-"answer": "D",
-"plain": "答案是D。講義說Meshmixer是Autodesk開發的經典軟體，2021年已停止更新，但網格編修功能仍被廣泛使用；Lychee Slicer（荔枝切層）採訂閱制、持續優化更新，整合多數品牌設備的參數檔。講義正是以功能成熟的Meshmixer和持續更新的Lychee Slicer兩套作為基準範本，所以D說Lychee停更、只用Meshmixer是錯的。",
-"tip": "停更的是Meshmixer",
-"paper": 3
-},
-{
 "id": "ai-2c-23",
 "src": "AI模擬題",
 "subject": 2,
@@ -9379,23 +9209,6 @@ window.EXAM_DATA = {
 "paper": 3
 },
 {
-"id": "ai-2c-43",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "vpp",
-"q": "關於講義用來說明下照式VPP參數的Lychee Slicer，下列敘述何者正確？",
-"options": [
-"由Autodesk公司開發，並已於2021年停止版本更新",
-"只支援DLP機型，不支援MSLA與LCD等光固化機種",
-"法國公司開發，聯網選機型後自動對應成型尺寸、解析度與畫素大小",
-"雲端樹脂參數只有曝光時間，不含抬升速度與靜置延遲"
-],
-"answer": "C",
-"plain": "答案是C。Lychee Slicer由法國軟體開發公司推出，整合Elegoo、Anycubic、Phrozen、Creality等品牌的MSLA、LCD與DLP機型；聯網時選定機型，系統就自動帶入成型尺寸、螢幕解析度、畫素大小與光學特性。A說的是Meshmixer；B錯，三種機型都有整合；D錯，雲端樹脂參數包含標準曝光時間、抬升速度與靜置延遲。",
-"tip": "Lychee法國聯網自動配",
-"paper": 4
-},
-{
 "id": "ai-2c-44",
 "src": "AI模擬題",
 "subject": 2,
@@ -9461,40 +9274,6 @@ window.EXAM_DATA = {
 "answer": "C",
 "plain": "答案是C。高黏度樹脂或大截面積模型時，樹脂流動性較差；平台下降太快，就像用手掌快速壓一盆蜂蜜，蜂蜜來不及往旁邊流，會產生明顯的流體推力，可能壓壞微細特徵，還會因樹脂沒及時排開、流平，讓實際列印層厚出現誤差。A、B、D都不是講義所說的後果，滲透深度是設定好的支撐參數，不會自己改變。",
 "tip": "稠樹脂下降要慢",
-"paper": 4
-},
-{
-"id": "ai-2c-48",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "vpp",
-"q": "Lychee Slicer中屬於非核心的輔助與外圍功能模組，下列功能對應何者有誤？",
-"options": [
-"Scene Scale Compensation：針對固化收縮的尺寸偏差，做X／Y／Z軸等比例補償",
-"Print Time Override：依樹脂黏度自動延長每層曝光時間，以防爆層",
-"Compensation：提供灰階像素或像素移除演算法，修飾邊緣輪廓或支撐接點殘跡",
-"Price：設定樹脂單價與容器容量，自動換算材料成本與消耗量"
-],
-"answer": "B",
-"plain": "答案是B。Print Time Override（列印時間覆寫）是讓使用者手動覆寫或調整預估的耗時，用來校正特定印表機韌體回報時間的誤差，只改時間估算，不會去改曝光時間。A場景尺寸補償處理固化收縮的等比縮放；C微觀補償用灰階像素、像素移除修飾邊緣；D成本估算計算樹脂花費，三者都正確。",
-"tip": "時間覆寫只校正估時",
-"paper": 3
-},
-{
-"id": "ai-2c-49",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "vpp",
-"q": "依講義，下列哪一個Lychee Slicer模組屬於核心參數，而非輔助與外圍功能？",
-"options": [
-"Price（成本與物料估算）",
-"Print Time Override（列印時間覆寫）",
-"Scene Scale Compensation（場景尺寸補償）",
-"Normal Layers（正常層設定）"
-],
-"answer": "D",
-"plain": "答案是D。講義把Global Parameters（全局與運動控制）、Burn In Layers（首層設定）、Normal Layers（正常層設定）列為核心參數，涵蓋全域運動控制、首層附著與正常層成型精度；Scene Scale Compensation、Compensation、Price、Print Time Override則屬非核心的輔助與外圍功能，所以A、B、C都是輔助模組。",
-"tip": "核心是全局首層正常層",
 "paper": 4
 },
 {
@@ -9685,23 +9464,6 @@ window.EXAM_DATA = {
 "paper": 4
 },
 {
-"id": "ai-2d-27",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "matF",
-"q": "依講義表 5.3「PLA 與 ABS 材料之熱學特性與加工參數比較表」，下列敘述何者錯誤？",
-"options": [
-"PLA 熔融體積指數約 10.3 cm³/10min，略高於 ABS 的 9.7",
-"PLA 的坍塌溫度高於 ABS，因此 PLA 成品較耐熱",
-"PLA 的結晶熔點（Tm）約為 160～190°C",
-"PLA 建議熱床 50～70°C 且非必要；ABS 則需要熱床"
-],
-"answer": "B",
-"plain": "錯的是「PLA 坍塌溫度較高、較耐熱」。表 5.3 中 PLA 的坍塌溫度約 70～80°C，ABS 約 110～125°C，ABS 明顯較高；PLA 的 Tg 也低於 ABS，成品在稍高溫環境下就容易軟化變形。PLA 結晶熔點約 160～190°C、熔融體積指數（PLA 10.3、ABS 9.7 cm³/10min）與熱床條件（PLA 50～70°C 且非必要、ABS 需要熱床）都與表格相符。",
-"tip": "坍塌：ABS高於PLA",
-"paper": 3
-},
-{
 "id": "ai-2d-28",
 "src": "AI模擬題",
 "subject": 2,
@@ -9768,23 +9530,6 @@ window.EXAM_DATA = {
 "plain": "答案是丙烯腈（A）。三單體各有分工：丙烯腈管「硬、耐熱、耐酸鹼鹽」；丁二烯管「低溫韌性、延展、耐衝擊」，過多會降低硬度、光澤與流動性；苯乙烯管「硬度、好加工、尺寸穩定、表面光潔」。題目要求包含耐酸鹼鹽的化學腐蝕性能，只有丙烯腈符合。己內醯胺是 Nylon 6 的單體，與 ABS 無關。",
 "tip": "A硬耐化B韌S好加工",
 "paper": 3
-},
-{
-"id": "ai-2d-32",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "matF",
-"q": "講義表 5.2 列出 Stratasys 公司 ABS、ABSi、ABSplus 與 ABS/PC 四種配方的性質。在 66 磅負載下，熱變形溫度最高的是哪一種？",
-"options": [
-"ABS",
-"ABSi",
-"ABSplus",
-"ABS/PC"
-],
-"answer": "D",
-"plain": "答案是 ABS/PC。表 5.2 中 66 磅負載下的熱變形溫度：ABS 約 90°C、ABSi 約 87°C、ABSplus 約 96°C、ABS/PC 約 110°C。講義也提到 PC/ABS 兼具 PC 的高耐熱性與 ABS 的加工流動性，可以想成在 ABS 裡摻入耐熱的 PC，所以熱變形溫度最高；ABSi 反而最低。",
-"tip": "摻了PC最耐熱",
-"paper": 4
 },
 {
 "id": "ai-2d-33",
@@ -10006,23 +9751,6 @@ window.EXAM_DATA = {
 "plain": "答案是 PPD（1-苯基-1,2-丙二酮）。樟腦醌（CQ）是黃色粉末；PPD 外觀較白，和 CQ 混摻可以降低黃變，但單獨使用時聚合較慢。二苯甲酮（BP）反而固化層易黃變，搭配三級胺還會加重黃變；Irgacure 651 固化後碎片易殘留副產物引發黃變；碘鎓鹽是陽離子型光起始劑。",
 "tip": "PPD偏白配CQ",
 "paper": 3
-},
-{
-"id": "ai-2d-47",
-"src": "AI模擬題",
-"subject": 2,
-"topic": "matR",
-"q": "依講義表 5.5「常見的光起始劑列表」，下列敘述何者正確？",
-"options": [
-"TPO 黃變性高、氣味強烈，已不再用於 385／405 nm DLP／LCD 列印",
-"Irgacure 651 光反應後不殘留副產物，因此抗黃變性能最佳",
-"Irgacure 819 於 405 nm 感光度優異，適合厚件與陶瓷高填充樹脂",
-"二苯甲酮（BP）屬 Type I 裂解型，使用時不需搭配助起始劑"
-],
-"answer": "C",
-"plain": "答案是 Irgacure 819。它在 405 nm 長波段感光度優異、氣味低、揮發性極低，適合厚件與陶瓷／高填充複合樹脂。TPO 其實黃變性低、氣味低，還有光漂白特性，是 385／405 nm DLP／LCD 的主流起始劑；Irgacure 651 固化後碎片易殘留副產物而黃變；BP 是 Type II 奪氫型，須搭配三級胺助起始劑。",
-"tip": "819厚件陶瓷405",
-"paper": 4
 },
 {
 "id": "ai-2d-48",

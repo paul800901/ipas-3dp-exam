@@ -39,6 +39,7 @@ def ai_questions():
 
     每一輪由兩位出題者負責一科（a、b 是第一輪，c、d 是第二輪…），一輪分成兩份模擬卷：
     同一位出題者的題目依主題排好後輪流分給該輪的兩份，兩份主題比例一樣。
+    已經分過的題目在 ai_questions.json 記有 paper，之後刪題也不會讓其他題換卷。
     """
     path = TOOLS / "ai_questions.json"
     if not path.exists():
@@ -53,7 +54,7 @@ def ai_questions():
             out.append({
                 "id": q["id"], "src": "AI模擬題", "subject": q["subject"], "topic": q["topic"],
                 "q": q["q"], "options": q["options"], "answer": q["answer"],
-                "plain": q["plain"], "tip": q["tip"], "paper": first + i % 2,
+                "plain": q["plain"], "tip": q["tip"], "paper": q.get("paper", first + i % 2),
             })
     return out
 
