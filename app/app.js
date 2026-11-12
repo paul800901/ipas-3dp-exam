@@ -74,9 +74,21 @@
     return Math.round((e - t) / 86400000);
   }
   const subjName = (s) => (s === 1 ? "科目一：3D 列印概論" : "科目二：製程與材料概論");
+  // AI 依官方學習指引另外出的題目，跟官方題分開，不混進原本的模擬考與隨機練習
+  const isAI = (q) => q.src === "AI模擬題";
+  const OFFICIAL = Q.filter((q) => !isAI(q));
+  const PAPERS = [];
+  Q.filter(isAI).forEach((q) => {
+    let p = PAPERS.find((x) => x.subject === q.subject && x.no === q.paper);
+    if (!p) PAPERS.push((p = { subject: q.subject, no: q.paper, ids: [] }));
+    p.ids.push(q.id);
+  });
+  PAPERS.sort((a, b) => a.subject - b.subject || a.no - b.no);
+  const paperName = (p) => `AI 模擬卷・${p.subject === 1 ? "科目一" : "科目二"}・第 ${p.no} 份`;
   function tagsHtml(q) {
+    const src = q.src === "115真題" ? ["real", "⭐ 115 年真題"] : isAI(q) ? ["ai", "🤖 AI 模擬題"] : ["", "官方樣題"];
     return `<div class="tags">
-      <span class="tag ${q.src === "115真題" ? "real" : ""}">${q.src === "115真題" ? "⭐ 115 年真題" : "官方樣題"}</span>
+      <span class="tag ${src[0]}">${src[1]}</span>
       <span class="tag">${q.subject === 1 ? "科目一" : "科目二"}</span>
       <span class="tag">${esc(DATA.topics[q.topic])}</span></div>`;
   }
@@ -119,7 +131,7 @@
     const wrong = Q.filter((q) => toReview(q.id)).length;
     const td = store.days[today()] || { done: 0, right: 0 };
     const left = daysLeft();
-    const lastMock = store.mocks[store.mocks.length - 1];
+    const lastMock = store.mocks.filter((m) => !m.paper).pop();
     show(`
       <h1>3D 列印考試・抱佛腳</h1>
       <p class="muted">iPAS 3D 列印積層製造工程師（初級）</p>
@@ -138,6 +150,7 @@
         <button id="m-practice"><span class="icon">✏️</span><span>更多練習<span class="sub">官方樣題、依主題練、全部隨機</span></span></button>
         <button id="m-wrong"><span class="icon">❌</span><span>錯題＋標記（${wrong} 題）<span class="sub">答錯的、和你按 🔖 標記的題目都在這裡</span></span></button>
         <button id="m-mock"><span class="icon">🎯</span><span>模擬考<span class="sub">50 題、75 分鐘，跟真的考試一樣${lastMock ? `｜上次 ${lastMock.score} 分` : ""}</span></span></button>
+        ${PAPERS.length ? `<button id="m-ai"><span class="icon">🤖</span><span>AI 模擬卷（${PAPERS.length} 份）<span class="sub">AI 讀官方講義另外出的新題，練習「沒看過的題目」</span></span></button>` : ""}
       </div>
       <div class="card">
         <h3>建議怎麼念（兩週）</h3>
@@ -154,6 +167,7 @@
       bind("#m-practice", () => practiceMenu("all"));
       bind("#m-wrong", wrongBook);
       bind("#m-mock", mockMenu);
+      bind("#m-ai", aiMenu);
       bind("#m-reset", () => {
         if (confirm("確定要清除所有作答紀錄嗎？清掉就回不來了。")) { store = { stats: {}, days: {}, mocks: [], marks: {} }; save(); home(); }
       });
@@ -211,10 +225,10 @@
           ["115 真題・兩科混合", (q) => q.src === "115真題"],
         ]
       : [
-          ["全部題目隨機（真題＋樣題）", () => true],
+          ["全部題目隨機（真題＋樣題）", (q) => !isAI(q)],
           ["官方樣題・科目一", (q) => q.src === "官方樣題" && q.subject === 1],
           ["官方樣題・科目二", (q) => q.src === "官方樣題" && q.subject === 2],
-          ["只練還沒做過的", (q) => !seen(q.id)],
+          ["只練還沒做過的（真題＋樣題）", (q) => !isAI(q) && !seen(q.id)],
         ];
     const rows = sets.map(([name, f], i) => {
       const list = Q.filter(f);
@@ -367,23 +381,49 @@
       <div class="card">
         <p>跟真的考試一樣：每科 ${MOCK_SIZE} 題、${MOCK_MINUTES} 分鐘，每題 2 分。</p>
         <p>考試中不會告訴你對錯，交卷後才一起檢討。</p>
-        <p class="muted">題目從真題＋官方樣題裡隨機抽，每次都不一樣。</p>
+        <p class="muted">題目從真題＋官方樣題裡隨機抽，每次都不一樣。想考沒看過的新題，請到首頁「🤖 AI 模擬卷」。</p>
       </div>
       <div class="menu">
         <button data-s="1"><span class="icon">1️⃣</span><span>${subjName(1)}</span></button>
         <button data-s="2"><span class="icon">2️⃣</span><span>${subjName(2)}</span></button>
       </div>
-      ${hist.length ? `<div class="card"><h3>最近的成績</h3>${hist.map((m) => `<p>${m.date}　${m.subject === 1 ? "科目一" : "科目二"}：<b>${m.score} 分</b></p>`).join("")}</div>` : ""}
+      ${hist.length ? `<div class="card"><h3>最近的成績</h3>${hist.map((m) => `<p>${m.date}　${m.subject === 1 ? "科目一" : "科目二"}${m.paper ? `（AI 第 ${m.paper} 份）` : ""}：<b>${m.score} 分</b></p>`).join("")}</div>` : ""}
     `, () => {
       bind("#back", home);
       bindAll("[data-s]", (el) => startMock(+el.dataset.s));
     });
   }
 
-  function startMock(subject) {
-    const pool = Q.filter((q) => q.subject === subject);
-    mock = { subject, list: shuffle(pool).slice(0, MOCK_SIZE).map((q) => q.id), ans: {}, i: 0, end: Date.now() + MOCK_MINUTES * 60000, done: false };
+  // paper 有給就考那一份 AI 模擬卷（題目固定、順序打亂），沒給就從官方題隨機抽
+  function startMock(subject, paper) {
+    const list = paper ? shuffle(paper.ids) : shuffle(OFFICIAL.filter((q) => q.subject === subject)).slice(0, MOCK_SIZE).map((q) => q.id);
+    mock = { subject, paper, list, ans: {}, i: 0, end: Date.now() + MOCK_MINUTES * 60000, done: false };
     mockQuestion();
+  }
+  const mockTitle = () => (mock.paper ? paperName(mock.paper) : subjName(mock.subject));
+
+  // ---------- AI 模擬卷 ----------
+  function aiMenu() {
+    const last = (p) => store.mocks.filter((m) => m.subject === p.subject && m.paper === p.no).pop();
+    show(`
+      <div class="topbar"><button class="small" id="back">← 回首頁</button></div>
+      <h2>🤖 AI 模擬卷</h2>
+      <div class="card">
+        <p>這些是 AI 讀官方學習指引後，另外出的新題目（不是官方考題），用來練習「沒看過的題目」怎麼判斷。</p>
+        <p>每份 ${MOCK_SIZE} 題左右。「模擬考」跟真的考試一樣計時 ${MOCK_MINUTES} 分鐘、交卷才對答案；「練習」每題馬上看解說。</p>
+        <p class="muted">答錯的一樣會進「錯題＋標記」。若解說跟官方講義不同，以官方為準。</p>
+      </div>
+      ${PAPERS.map((p, i) => {
+        const m = last(p);
+        return `<div class="card"><h3>${paperName(p)}</h3>
+          <p class="muted">${p.ids.length} 題${m ? `｜上次模擬考 ${m.score} 分（${m.date}）` : ""}｜練過 ${p.ids.filter(seen).length} 題</p>
+          <div class="navrow"><button class="primary" data-pm="${i}">模擬考（計時）</button><button data-pp="${i}">練習（每題看解說）</button></div></div>`;
+      }).join("")}
+    `, () => {
+      bind("#back", home);
+      bindAll("[data-pm]", (el) => { const p = PAPERS[+el.dataset.pm]; startMock(p.subject, p); });
+      bindAll("[data-pp]", (el) => { const p = PAPERS[+el.dataset.pp]; startPractice(p.ids.map((id) => QBY[id]), paperName(p), aiMenu); });
+    });
   }
 
   function mockQuestion() {
@@ -391,7 +431,7 @@
     const n = mock.list.length;
     const answered = Object.keys(mock.ans).length;
     show(`
-      <div class="topbar"><span class="muted">${subjName(mock.subject)}</span><span class="timer" id="timer"></span></div>
+      <div class="topbar"><span class="muted">${esc(mockTitle())}</span><span class="timer" id="timer"></span></div>
       <div class="muted">第 ${mock.i + 1} / ${n} 題・已作答 ${answered}</div>
       <div class="card">
         <div class="question">${mock.i + 1}. ${esc(q.q)}</div>
@@ -423,7 +463,7 @@
         const left = n - Object.keys(mock.ans).length;
         if (!left || confirm(`還有 ${left} 題沒作答，確定要交卷嗎？`)) mockResult();
       });
-      bind("#giveup", () => { if (confirm("確定放棄這次模擬考？不會記錄成績。")) mockMenu(); });
+      bind("#giveup", () => { if (confirm("確定放棄這次模擬考？不會記錄成績。")) (mock.paper ? aiMenu : mockMenu)(); });
       keyHandler = (e) => {
         const k = e.key.toUpperCase();
         const o = "1234".indexOf(k) >= 0 ? "1234".indexOf(k) : LETTERS.indexOf(k);
@@ -451,14 +491,14 @@
       const right = mock.list.filter((id) => LETTERS[mock.ans[id]] === QBY[id].answer).length;
       mock.score = Math.round((right / mock.list.length) * 100);
       mock.right = right;
-      store.mocks.push({ date: today(), subject: mock.subject, score: mock.score });
+      store.mocks.push(Object.assign({ date: today(), subject: mock.subject, score: mock.score }, mock.paper ? { paper: mock.paper.no } : {}));
       save();
     }
     const wrong = mock.list.filter((id) => LETTERS[mock.ans[id]] !== QBY[id].answer);
     const markedRight = mock.list.filter((id) => LETTERS[mock.ans[id]] === QBY[id].answer && marked(id));
     const msg = mock.score >= 70 ? "這科穩了！🎉" : mock.score >= 60 ? "這科及格了，但兩科平均要 70，再拚一點" : "還差一點，把下面錯的看懂再考一次";
     show(`
-      <h2>模擬考成績・${subjName(mock.subject)}</h2>
+      <h2>模擬考成績・${esc(mockTitle())}</h2>
       <div class="card" style="text-align:center">
         <div class="score" style="color:${mock.score >= 70 ? "var(--good)" : mock.score >= 60 ? "#c98a00" : "var(--bad)"}">${mock.score} 分</div>
         <p>答對 ${mock.right} / ${mock.list.length} 題</p>
@@ -473,7 +513,7 @@
     `, () => {
       bindZoom();
       bindMarks((id) => { const g = app.querySelector(`[data-j="${mock.list.indexOf(id)}"]`); if (g) g.classList.toggle("marked", marked(id)); });
-      bind("#again", () => startMock(mock.subject));
+      bind("#again", () => startMock(mock.subject, mock.paper));
       bind("#back", home);
       bindAll("[data-j]", (el) => mockReview(+el.dataset.j));
     });
