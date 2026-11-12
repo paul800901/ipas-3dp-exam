@@ -84,7 +84,7 @@
     p.ids.push(q.id);
   });
   // 第 5、6 份是照真題風格出的觀念判斷題，排最前面；第 3、4 份考講義細節，比真題難，排最後
-  const paperRank = (no) => (no >= 5 ? 0 : no <= 2 ? 1 : 2);
+  const paperRank = (no) => (no === 5 || no === 6 ? 0 : no === 3 || no === 4 ? 2 : 1);
   const paperNote = (no) => ["觀念判斷題，最接近真題，優先練", "綜合題", "講義細節題，比真題難，當補充就好"][paperRank(no)];
   PAPERS.sort((a, b) => a.subject - b.subject || paperRank(a.no) - paperRank(b.no) || a.no - b.no);
   const paperName = (p) => `AI 模擬卷・${p.subject === 1 ? "科目一" : "科目二"}・第 ${p.no} 份`;
