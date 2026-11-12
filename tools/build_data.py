@@ -37,7 +37,8 @@ def clean_q(text):
 def ai_questions():
     """AI 依學習指引出的模擬題（tools/ai_questions.json，已經過另一家模型核對）。
 
-    每科分成兩份模擬卷：同一位出題者的題目依主題排好後輪流分給第 1、2 份，兩份主題比例一樣。
+    每一輪由兩位出題者負責一科（a、b 是第一輪，c、d 是第二輪…），一輪分成兩份模擬卷：
+    同一位出題者的題目依主題排好後輪流分給該輪的兩份，兩份主題比例一樣。
     """
     path = TOOLS / "ai_questions.json"
     if not path.exists():
@@ -45,13 +46,14 @@ def ai_questions():
     items = json.loads(path.read_text(encoding="utf-8"))
     out = []
     for group in sorted({q["id"].rsplit("-", 1)[0] for q in items}):
+        first = "abcdefgh".index(group[-1]) // 2 * 2 + 1  # a/b → 第 1、2 份；c/d → 第 3、4 份
         qs = sorted((q for q in items if q["id"].startswith(group + "-")), key=lambda q: (q["topic"], q["id"]))
         for i, q in enumerate(qs):
             assert q["topic"] in TOPICS and q["answer"] in "ABCD" and len(q["options"]) == 4, q["id"]
             out.append({
                 "id": q["id"], "src": "AI模擬題", "subject": q["subject"], "topic": q["topic"],
                 "q": q["q"], "options": q["options"], "answer": q["answer"],
-                "plain": q["plain"], "tip": q["tip"], "paper": i % 2 + 1,
+                "plain": q["plain"], "tip": q["tip"], "paper": first + i % 2,
             })
     return out
 

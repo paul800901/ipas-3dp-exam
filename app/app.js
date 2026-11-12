@@ -192,14 +192,14 @@
     });
   }
 
-  function lesson(key) {
+  function lesson(key, back) {
     const ordered = DATA.lessons.filter((x) => x.subject === 1).concat(DATA.lessons.filter((x) => x.subject === 2));
     const idx = ordered.findIndex((x) => x.key === key);
     const l = ordered[idx];
     const n = Q.filter((q) => q.topic === key).length;
     const next = ordered[idx + 1];
     show(`
-      <div class="topbar"><button class="small" id="back">← 重點卡列表</button><span class="muted">${l.subject === 1 ? "科目一" : "科目二"}</span></div>
+      <div class="topbar"><button class="small" id="back">${back ? "← 回成績" : "← 重點卡列表"}</button><span class="muted">${l.subject === 1 ? "科目一" : "科目二"}</span></div>
       <h2>${esc(l.title)}</h2>
       <div class="card">
         ${l.points.map(([h, t, fig]) => `<div class="lesson-point"><h3>${esc(h)}</h3><p>${esc(t)}</p>${fig ? `<img class="qimg fig" src="fig/${esc(fig)}.svg" alt="示意圖（點一下放大）">` : ""}</div>`).join("")}
@@ -209,10 +209,10 @@
         ${next ? `<button id="next">下一張：${esc(next.title)} →</button>` : ""}
       </div>
     `, () => {
-      bind("#back", learnList);
+      bind("#back", back || learnList);
       bindZoom();
-      bind("#go", () => startPractice(Q.filter((q) => q.topic === key), `主題：${l.title}`, () => lesson(key)));
-      if (next) bind("#next", () => lesson(next.key));
+      bind("#go", () => startPractice(Q.filter((q) => q.topic === key), `主題：${l.title}`, () => lesson(key, back)));
+      if (next) bind("#next", () => lesson(next.key, back));
     });
   }
 
@@ -445,7 +445,7 @@
       </div>
       <div class="card">
         <div class="grid-nums">${mock.list.map((id, i) => `<button data-j="${i}" class="${mock.ans[id] !== undefined ? "done" : ""} ${i === mock.i ? "cur" : ""} ${marked(id) ? "marked" : ""}">${i + 1}</button>`).join("")}</div>
-        <p class="muted">題號下面有黃線的，是你標記 🔖 的題目，交卷前可以回去再看一次。</p>
+        <p class="muted">題號右上角有 🔖 的，是你標記的題目，交卷前可以回去再看一次。</p>
         <div class="navrow"><button id="submit" class="primary">交卷</button><button id="giveup" class="ghost">放棄這次考試</button></div>
       </div>
     `, () => {
@@ -484,6 +484,27 @@
     if (el) { el.textContent = `⏱ ${m}:${String(s).padStart(2, "0")}`; el.classList.toggle("warn", m < 10); }
   }
 
+  // 各主題答對率：最弱的排最上面，可直接去看那個主題的重點卡
+  function topicCard(ids, isRight) {
+    const rows = {};
+    ids.forEach((id) => {
+      const t = QBY[id].topic;
+      const r = rows[t] || (rows[t] = { t, n: 0, ok: 0 });
+      r.n++;
+      if (isRight(id)) r.ok++;
+    });
+    const list = Object.values(rows).sort((a, b) => a.ok / a.n - b.ok / b.n || b.n - a.n);
+    return `<div class="card"><h3>各主題答對率</h3>
+      <p class="muted">最弱的排在最上面。先把紅色主題的重點卡看懂，再回來考。</p>
+      ${list.map((r) => {
+        const pct = Math.round((r.ok / r.n) * 100);
+        const lv = pct >= 70 ? "good" : pct >= 50 ? "mid" : "bad";
+        return `<div class="trow"><div class="tname">${esc(DATA.topics[r.t])}<span class="muted">　${r.ok}/${r.n} 題</span></div>
+          <div class="tbar"><i class="${lv}" style="width:${pct}%"></i></div><b class="${lv}">${pct}%</b>
+          <button class="small" data-lesson="${esc(r.t)}">看重點</button></div>`;
+      }).join("")}</div>`;
+  }
+
   function mockResult() {
     if (!mock.done) {
       mock.done = true;
@@ -504,8 +525,9 @@
         <p>答對 ${mock.right} / ${mock.list.length} 題</p>
         <p>${msg}</p>
       </div>
+      ${topicCard(mock.list, (id) => LETTERS[mock.ans[id]] === QBY[id].answer)}
       <div class="card"><div class="grid-nums">${mock.list.map((id, i) => `<button data-j="${i}" class="${LETTERS[mock.ans[id]] === QBY[id].answer ? "right" : "wrong"} ${marked(id) ? "marked" : ""}">${i + 1}</button>`).join("")}</div>
-        <p class="muted">綠色答對、紅色答錯，題號下面有黃線的是你標記的。點題號可以看那題的解說。</p></div>
+        <p class="muted">綠色答對、紅色答錯，右上角有 🔖 的是你標記的。點題號可以看那題的解說。</p></div>
       ${markedRight.length ? `<h3>答對、但你有標記 🔖 的題目（${markedRight.length} 題）</h3>${markedRight.map((id) => reviewCard(id)).join("")}` : ""}
       <h3>答錯的題目（${wrong.length} 題）</h3>
       ${wrong.map((id) => reviewCard(id)).join("")}
@@ -514,6 +536,7 @@
       bindZoom();
       bindMarks((id) => { const g = app.querySelector(`[data-j="${mock.list.indexOf(id)}"]`); if (g) g.classList.toggle("marked", marked(id)); });
       bind("#again", () => startMock(mock.subject, mock.paper));
+      bindAll("[data-lesson]", (el) => lesson(el.dataset.lesson, mockResult));
       bind("#back", home);
       bindAll("[data-j]", (el) => mockReview(+el.dataset.j));
     });
